@@ -1,12 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { useFavorites } from "./FavoriteContext";
+import { View, Text, StyleSheet, Image, FlatList, Dimensions, TouchableOpacity } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 const FavoriteScreen = () => {
+  const { favorites, removeFromFavorites } = useFavorites();
+
   const sizedH = Dimensions.get("window").height;
   const sizedW = Dimensions.get("window").width;
 
   const imageH = sizedH * 0.3;
   const imageW = sizedW * 0.6;
+
+  const handleRemoveItem = (item) => {
+    removeFromFavorites(item);
+  };
 
   return (
     <View style={styles.container}>
@@ -14,6 +22,18 @@ const FavoriteScreen = () => {
       <Image
         source={require("./assets/favorite-added.png")}
         style={[styles.image, { height: imageH, width: imageW }]}
+      />
+      <FlatList
+        data={favorites}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <Text style={styles.item}>{item.name}</Text>
+            <TouchableOpacity onPress={() => handleRemoveItem(item)}>
+              <AntDesign name="delete" size={20} color="orangered" style={styles.deleteIcon} />
+            </TouchableOpacity>
+          </View>
+        )}
+        keyExtractor={(item) => item.name}
       />
       <Text style={styles.description}>
         Вы можете добавить ещё персонажей в свой список избранных и просматривать их здесь!
@@ -25,7 +45,6 @@ const FavoriteScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "black",
@@ -44,10 +63,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   description: {
-    color: "white",
+    color: "goldenrod",
     fontSize: 18,
     textAlign: "center",
     paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center", 
+    marginBottom: 5,
+  },
+  item: {
+    fontSize: 18,
+    color: "white",
+    marginRight: 10,
+    color: "goldenrod",
+    alignSelf: 'center',
+  },
+  deleteIcon: {
+    paddingTop: 5,
   },
 });
 
